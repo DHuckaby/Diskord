@@ -120,7 +120,9 @@ class DiscordWebSocket(
         GlobalScope.launch { heartbeatJob?.cancelAndJoin() }
         heartbeatJob = null
         socket?.close(WebSocketCloseCode.NORMAL_CLOSURE, "Requested close", forceClose)
-        socket = null
+        while (socket != null) {
+            // Block until the socket has been closed, preventing accidental closure from a restart
+        }
         logger.info("Closed connection")
     }
 
