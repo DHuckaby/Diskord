@@ -73,12 +73,12 @@ class DiscordWebSocket(
                 }
 
                 override fun closing(code: WebSocketCloseCode, reason: String) {
-                    logger.info("Closing with code '$code' and reason '$reason'")
+                    logger.info("Closing with code '$code' with ${parseReason(reason)}")
                     websocketLifecycleListener?.closing(code, reason)
                 }
 
                 override fun closed(code: WebSocketCloseCode, reason: String) {
-                    logger.info("Closed with code '$code' and reason '$reason'")
+                    logger.info("Closed with code '$code' with ${parseReason(reason)}")
                     socket = null
                     if (code != WebSocketCloseCode.NORMAL_CLOSURE) {
                         restart()
@@ -88,12 +88,15 @@ class DiscordWebSocket(
 
                 override fun failed(failure: Throwable, code: Int?, body: String?) {
                     logger.error("Socket connection encountered an exception", failure)
+                    socket = null
                     restart()
                     websocketLifecycleListener?.failed(failure, code, body)
                 }
             }, ::receiveMessage)
         }
     }
+
+    private fun parseReason(reason: String) = if (reason.isBlank()) "no reason provided" else "reason '$reason'"
 
     /**
      * Starts the websocket.
