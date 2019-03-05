@@ -79,8 +79,8 @@ class DiscordWebSocket(
 
                 override fun closed(code: WebSocketCloseCode, reason: String) {
                     logger.info("Closed with code '$code' with ${parseReason(reason)}")
-                    socket = null
                     if (code != WebSocketCloseCode.NORMAL_CLOSURE) {
+                        socket = null
                         restart()
                     }
                     websocketLifecycleListener?.closed(code, reason)
@@ -119,9 +119,7 @@ class DiscordWebSocket(
         GlobalScope.launch { heartbeatJob?.cancelAndJoin() }
         heartbeatJob = null
         socket?.close(WebSocketCloseCode.NORMAL_CLOSURE, "Requested close", forceClose)
-        while (socket != null) {
-            // Block until the socket has been closed, preventing accidental closure from a restart
-        }
+        socket = null
         logger.info("Closed connection")
     }
 
