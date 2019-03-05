@@ -17,7 +17,7 @@ fun Bot.commands(prefix: String = ".", commands: MutableList<Command> = ArrayLis
 
     messageCreated { message ->
         commands.filter { message.content.startsWith(set.prefix + it.command) }.forEach {
-            if (it.allowBots || message.isFromUser) it.action(message)
+            if (it.allowBots || message.isFromUser) it.action(it, message)
         }
     }
 }
@@ -42,7 +42,7 @@ class CommandSet(var prefix: String = ".", val commands: MutableList<Command>)
  * @param action The lambda to run when a [Message] is created that matches the command and prefix.
  */
 @DiskordDsl
-fun CommandSet.command(command: String, allowBots: Boolean = false, action: suspend Message.() -> Unit) {
+fun CommandSet.command(command: String, allowBots: Boolean = false, action: suspend Command.(Message) -> Unit) {
     commands += Command(command, allowBots, action)
 }
 
@@ -56,4 +56,10 @@ fun CommandSet.command(command: String, allowBots: Boolean = false, action: susp
  * @param action The lambda to run when a [Message] is created that matches the command and prefix.
  */
 @DiskordDsl
-class Command(val command: String, val allowBots: Boolean = false, val action: suspend Message.() -> Unit)
+class Command(val command: String, val allowBots: Boolean = false, val action: suspend Command.(Message) -> Unit) {
+    /**
+     * The command content without the prefix and command key.
+     */
+    val Message.command: String
+        get() = content.split(content, limit = 2).first()
+}
