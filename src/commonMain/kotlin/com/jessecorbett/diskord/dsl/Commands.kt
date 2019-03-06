@@ -25,7 +25,7 @@ fun Bot.commands(prefix: String = ".", commands: MutableList<Command> = ArrayLis
         commands
             .filter { checkCommand(message.content, it.command, it.isRegex) }
             .filter { it.allowBots || message.isFromUser }
-            .forEach { it.action(it, message) } // TODO: it.action delegates out a result for if it doesn't want to claim a command
+            .forEach { it.action(it, message) }
     }
 }
 
