@@ -13,12 +13,19 @@ import com.jessecorbett.diskord.util.isFromUser
  */
 @DiskordDsl
 fun Bot.commands(prefix: String = ".", commands: MutableList<Command> = ArrayList(), block: CommandSet.() -> Unit) {
-    val set = CommandSet(prefix, commands).apply(block)
+    CommandSet(prefix, commands).apply(block)
+
+    fun checkCommand(message: String, command: String, isRegex: Boolean) = if (!isRegex) {
+        message.startsWith(prefix + command)
+    } else {
+        message.startsWith(prefix) && message.drop(prefix.length).dropLast(message.length - (prefix.length + command.length)).matches(Regex(command))
+    }
 
     messageCreated { message ->
-        commands.filter { message.content.startsWith(set.prefix + it.command) }.forEach {
-            if (it.allowBots || message.isFromUser) it.action(it, message)
-        }
+        commands
+            .filter { checkCommand(message.content, it.command, it.isRegex) }
+            .filter { it.allowBots || message.isFromUser }
+            .forEach { it.action(it, message) } // TODO: it.action delegates out a result for if it doesn't want to claim a command
     }
 }
 
@@ -42,8 +49,8 @@ class CommandSet(var prefix: String = ".", val commands: MutableList<Command>)
  * @param action The lambda to run when a [Message] is created that matches the command and prefix.
  */
 @DiskordDsl
-fun CommandSet.command(command: String, allowBots: Boolean = false, action: suspend Command.(Message) -> Unit) {
-    commands += Command(command, allowBots, action)
+fun CommandSet.command(command: String, isRegex: Boolean = false, allowBots: Boolean = false, action: suspend Command.(Message) -> Unit) {
+    commands += Command(command, isRegex, allowBots, action)
 }
 
 /**
@@ -52,11 +59,14 @@ fun CommandSet.command(command: String, allowBots: Boolean = false, action: susp
  * Encapsulates a single command and action lambda pair.
  *
  * @param command The text for the command, not including prefix.
+ * @param isRegex If the command provided should be parsed as regex.
  * @param allowBots Should bots be allowed to invoke this command. Defaults to false.
  * @param action The lambda to run when a [Message] is created that matches the command and prefix.
+ *
+ * TODO add support for regex commands
  */
 @DiskordDsl
-class Command(val command: String, val allowBots: Boolean = false, val action: suspend Command.(Message) -> Unit) {
+class Command(val command: String, val isRegex: Boolean = false, val allowBots: Boolean = false, val action: suspend Command.(Message) -> Unit) {
     /**
      * The command content without the prefix and command key.
      */
