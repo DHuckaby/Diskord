@@ -1,5 +1,8 @@
 # Changelog
 
+## [1.4.0] - 2019-xx-xx
+- Upgraded the command DSL with slight breaking changes, bringing it in line with the bot DSL in design
+
 ## [1.3.0] - 2019-02-03
 
 ### Changed
