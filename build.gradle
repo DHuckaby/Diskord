@@ -28,10 +28,10 @@ dokka {
         path = "src/jvmMain/kotlin"
         platforms = ["JVM"]
     }
-//    sourceRoot {
-//        path = "src/jsMain/kotlin"
-//        platforms = ["JS"]
-//    }
+    sourceRoot {
+        path = "src/jsMain/kotlin"
+        platforms = ["JS"]
+    }
 
     linkMapping {
         dir = "src/commonMain/kotlin"
@@ -43,11 +43,11 @@ dokka {
         url = "https://gitlab.com/jesselcorbett/Diskord/tree/master/src/jvmMain/kotlin"
         suffix = "#L"
     }
-//    linkMapping {
-//        dir = "src/jsMain/kotlin"
-//        url = "https://gitlab.com/jesselcorbett/Diskord/tree/master/src/jsMain/kotlin"
-//        suffix = "#L"
-//    }
+    linkMapping {
+        dir = "src/jsMain/kotlin"
+        url = "https://gitlab.com/jesselcorbett/Diskord/tree/master/src/jsMain/kotlin"
+        suffix = "#L"
+    }
 }
 
 def pomConfig = {
@@ -93,7 +93,7 @@ kotlin {
                 }
             }
         }
-//        fromPreset(presets.js, 'js')
+        fromPreset(presets.js, 'js')
     }
     sourceSets {
         commonMain {
@@ -136,18 +136,20 @@ kotlin {
             }
         }
 
-//        jsMain {
-//            dependencies {
-//                implementation "org.jetbrains.kotlin:kotlin-stdlib-js:${kotlinVersion}"
-//                implementation 'org.jetbrains.kotlinx:kotlinx-serialization-runtime-js:0.10.0'
-//                implementation 'io.github.microutils:kotlin-logging-js:1.6.25'
-//            }
-//        }
-//        jsTest {
-//            dependencies {
-//                implementation "org.jetbrains.kotlin:kotlin-test-js:${kotlinVersion}"
-//            }
-//        }
+        jsMain {
+            dependencies {
+                implementation "org.jetbrains.kotlin:kotlin-stdlib-js:${kotlinVersion}"
+                implementation 'org.jetbrains.kotlinx:kotlinx-serialization-runtime-js:0.10.0'
+                implementation 'io.github.microutils:kotlin-logging-js:1.6.25'
+                implementation "io.ktor:ktor-client-js:$ktorVersion"
+                implementation "io.ktor:ktor-client-websocket:$ktorVersion"
+            }
+        }
+        jsTest {
+            dependencies {
+                implementation "org.jetbrains.kotlin:kotlin-test-js:${kotlinVersion}"
+            }
+        }
     }
 }
 
