@@ -142,7 +142,7 @@ kotlin {
                 implementation 'org.jetbrains.kotlinx:kotlinx-serialization-runtime-js:0.10.0'
                 implementation 'io.github.microutils:kotlin-logging-js:1.6.25'
                 implementation "io.ktor:ktor-client-js:$ktorVersion"
-                implementation "io.ktor:ktor-client-websocket:$ktorVersion"
+                implementation "io.ktor:ktor-client-websocket-js:$ktorVersion"
             }
         }
         jsTest {
